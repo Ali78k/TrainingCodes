@@ -6,14 +6,20 @@
 #include <list>
 #include <ctime>
 
+enum TodoStage {
+    Pending,
+    InProgress,
+    Completed
+};
+
 class TodoItem {
 private:
     int id;
     std::string description;
-    bool completed;
+    TodoStage stage;
 
 public:
-    TodoItem(): id(0), description(""), completed(false) {}
+    TodoItem(): id(0), description(""), stage(Pending) {}
     ~TodoItem() = default;
 
     bool create(std::string new_description) {
@@ -26,8 +32,8 @@ public:
 
     int getId() { return id; }
     std::string getDescription() { return description; }
-    bool isCompleted() { return completed; }
-    void setCompleted(bool val) { completed = val; }
+    TodoStage getStage() { return stage; }
+    void setStage(TodoStage new_stage) { stage = new_stage; }
 };
 int main()
 {
@@ -44,9 +50,6 @@ int main()
 
     todoItems.clear();
 
-//    TodoItem test;
-//    test.create("this is a test");
-//    todoItems.push_back(test);
 
     while(1) {
         system("clear");
@@ -54,17 +57,28 @@ int main()
         std::cout << std::endl << std::endl;
         
         for (it = todoItems.begin(); it != todoItems.end(); it++) {
-            std::string completed = it->isCompleted() ? "Done" : "In Progress";
-            std::cout << it->getId() << "| " << it->getDescription() << " | "
-                << completed << std::endl;
+            std::string stage;
+            switch (it->getStage()) {
+            case Pending:
+                stage = "Pending";
+                break;
+            case InProgress:
+                stage = "In Progress";
+                break;
+            case Completed:
+                stage = "Completed";
+                break;
+            }
+            std::cout << it->getId() << " | " << it->getDescription() << " | " << stage << std::endl;
         }
+
         if (todoItems.empty()) {
             std::cout << "Add your first todo!" << std::endl;
         }
         std::cout << std::endl << std::endl;
 
         std::cout << "[a]dd a new Todo" << std::endl;
-        std::cout << "[c]complete a Todo" << std::endl;
+        std::cout << "[u]pdate stage of a Todo" << std::endl;
         std::cout << "[q]uit" << std::endl;
 
         std::cout << "Choice: ";
@@ -86,15 +100,22 @@ int main()
         }
 
 
-        else if (input_option == 'c') {
-            std::cout << "Enter id to mark completed: ";
+        else if (input_option == 'u') {
+            std::cout << "Enter id to update a stage: ";
             std::cin >> input_id;
 
             for (it = todoItems.begin(); it != todoItems.end(); it++) {
             
                 if (input_id == it->getId()) {
-                    it->setCompleted(true);
-                        break;
+                    int stage_choice;
+                    std::cout<< "Choose stage: [0] Pending, [1] In Progress, [2] Completed: ";
+                    std::cin >> stage_choice;
+                    if (stage_choice >= 0 && stage_choice <= 2) {
+                        it->setStage(static_cast<TodoStage>(stage_choice));
+                    } else {
+                        std::cout << "Invalid stage choice!" << std::endl;
+                    }
+                    break;
                 }
             }
         }
@@ -102,4 +123,3 @@ int main()
 
     return 0;
 }
-

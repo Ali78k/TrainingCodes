@@ -7,6 +7,16 @@ A simple To-Do List application written in C++ using classes. This project was i
 - Add tasks to the to-do list.
 - Mark tasks as completed.
 - Display the list of tasks with their statuses.
+- Update the stage of a task (Pending, In Progress, or Completed).
+
+## Changelog
+### **v0.2.0-alpha**
+- **New Feature:** Tasks now have stages: 
+  - **Pending**
+  - **In Progress**
+  - **Completed**
+- Added a menu option to update the stage of any task.
+- Improved the display of tasks to dynamically show their current stage.
 
 ## Getting Started
 
@@ -40,9 +50,6 @@ Run the compiled program:
 1. **File I/O**:
    - Add functionality to save the tasks to a file.
    - Enable reading tasks from a file when the program starts.
-
-2. **Extended Task Stages**:
-   - Introduce three stages for each task: `Pending`, `In Progress`, and `Completed`.
 
 ### Suggested Improvements
 
