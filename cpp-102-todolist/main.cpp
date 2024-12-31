@@ -1,10 +1,11 @@
 // This file contains the 'main' function.
-//
-//
+
+
 #include <iostream>
 #include <string>
 #include <list>
 #include <ctime>
+#include <fstream>
 
 enum TodoStage {
     Pending,
@@ -30,14 +31,58 @@ public:
     }
 
 
-    int getId() { return id; }
-    std::string getDescription() { return description; }
-    TodoStage getStage() { return stage; }
+    int getId() const { return id; }
+    std::string getDescription() const { return description; }
+    TodoStage getStage() const { return stage; }
     void setStage(TodoStage new_stage) { stage = new_stage; }
 };
+
+void saveToJson(const std::list<TodoItem>& todoItems, const std::string& filename);
+
+
+void saveToJson(const std::list<TodoItem>& todoItems, const std::string& filename) {
+    std::ofstream outFile(filename);
+
+    if (!outFile) {
+        std::cerr <<"Error openning file for writing." << std::endl;
+        return;
+    }
+
+    outFile << "[\n";
+    for (auto it = todoItems.begin(); it != todoItems.end(); ++it) {
+        outFile << "  {\n";
+        outFile << "    \"id\": " << it->getId() << ",\n";
+        outFile << "    \"description\": \"" << it->getDescription() << "\",\n";
+
+        std::string stage;
+        switch (it->getStage()) {
+        case Pending:
+            stage = "Pending";
+            break;
+        case InProgress:
+            stage = "InProgress";
+            break;
+        case Completed:
+            stage = "Completed";
+            break;
+        }
+        outFile << "    \"stage\": \"" << stage << "\"\n";
+        outFile << "  }";
+
+        if (std::next(it) != todoItems.end()) {
+            outFile << ",\n";
+        }
+    }
+    outFile << "\n]";
+
+    outFile.close();
+    std::cout << "Tasks saved to " << filename << std::endl;
+}
+
+
 int main()
 {
-    std::string version = "v0.2.0-alpha";
+    std::string version = "v0.2.0-bright";
     std::list<TodoItem> todoItems;
     std::list<TodoItem>::iterator it;
 
@@ -79,6 +124,7 @@ int main()
 
         std::cout << "[a]dd a new Todo" << std::endl;
         std::cout << "[u]pdate stage of a Todo" << std::endl;
+        std::cout << "[s]ave tasks to JSON" << std::endl;
         std::cout << "[q]uit" << std::endl;
 
         std::cout << "Choice: ";
@@ -118,6 +164,9 @@ int main()
                     break;
                 }
             }
+        }
+        else if (input_option == 's') {
+            saveToJson(todoItems, "todo_items.json");
         }
     }
 
