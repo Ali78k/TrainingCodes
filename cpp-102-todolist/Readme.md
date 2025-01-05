@@ -10,13 +10,19 @@ A simple To-Do List application written in C++ using classes. This project was i
 - Update the stage of a task (Pending, In Progress, or Completed).
 
 ## Changelog
-### **v0.2.0-alpha**
+### **v0.3.0-clever**
+- **Added:** Tasks can now be loaded from a JSON file (`todo_items.json`) at program start.
+- **Fixed:** Console success message now properly displays after saving tasks to the JSON file.
+- **Refactored:** Moved JSON handling code (loading and saving) into separate functions for better organization.
+
+### **v0.2.0-bright**
 - **New Feature:** Tasks now have stages: 
   - **Pending**
   - **In Progress**
   - **Completed**
 - Added a menu option to update the stage of any task.
 - Improved the display of tasks to dynamically show their current stage.
+- Added a basic functionality to save tasks into a Json file.
 
 ## Getting Started
 
