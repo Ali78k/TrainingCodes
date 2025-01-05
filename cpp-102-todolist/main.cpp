@@ -6,83 +6,13 @@
 #include <list>
 #include <ctime>
 #include <fstream>
-
-enum TodoStage {
-    Pending,
-    InProgress,
-    Completed
-};
-
-class TodoItem {
-private:
-    int id;
-    std::string description;
-    TodoStage stage;
-
-public:
-    TodoItem(): id(0), description(""), stage(Pending) {}
-    ~TodoItem() = default;
-
-    bool create(std::string new_description) {
-        // Generates a random integer between 1 and 100.
-        id = rand() % 100 + 1;
-        description = new_description;
-        return true;
-    }
-
-
-    int getId() const { return id; }
-    std::string getDescription() const { return description; }
-    TodoStage getStage() const { return stage; }
-    void setStage(TodoStage new_stage) { stage = new_stage; }
-};
-
-void saveToJson(const std::list<TodoItem>& todoItems, const std::string& filename);
-
-
-void saveToJson(const std::list<TodoItem>& todoItems, const std::string& filename) {
-    std::ofstream outFile(filename);
-
-    if (!outFile) {
-        std::cerr <<"Error openning file for writing." << std::endl;
-        return;
-    }
-
-    outFile << "[\n";
-    for (auto it = todoItems.begin(); it != todoItems.end(); ++it) {
-        outFile << "  {\n";
-        outFile << "    \"id\": " << it->getId() << ",\n";
-        outFile << "    \"description\": \"" << it->getDescription() << "\",\n";
-
-        std::string stage;
-        switch (it->getStage()) {
-        case Pending:
-            stage = "Pending";
-            break;
-        case InProgress:
-            stage = "InProgress";
-            break;
-        case Completed:
-            stage = "Completed";
-            break;
-        }
-        outFile << "    \"stage\": \"" << stage << "\"\n";
-        outFile << "  }";
-
-        if (std::next(it) != todoItems.end()) {
-            outFile << ",\n";
-        }
-    }
-    outFile << "\n]";
-
-    outFile.close();
-    std::cout << "Tasks saved to " << filename << std::endl;
-}
+#include "TodoItem.h"
+#include "JsonUtils.h"
 
 
 int main()
 {
-    std::string version = "v0.2.0-bright";
+    std::string version = "v0.3.0-clever";
     std::list<TodoItem> todoItems;
     std::list<TodoItem>::iterator it;
 
@@ -92,8 +22,9 @@ int main()
 
     srand(time(NULL));
 
+    // load existing tasks from json file
+    loadFromJson(todoItems, "todo_items.json");
 
-    todoItems.clear();
 
 
     while(1) {
@@ -167,6 +98,10 @@ int main()
         }
         else if (input_option == 's') {
             saveToJson(todoItems, "todo_items.json");
+            // Pause to allow the user to read the message
+            std::cout << "Press Enter to continue..." << std::endl;
+            std::cin.ignore(); // Clear any leftover input
+            std::cin.get();    // Wait for Enter
         }
     }
 
